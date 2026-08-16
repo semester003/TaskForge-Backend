@@ -1,23 +1,22 @@
-const express = require("express");
+import express = require("express");
+import {
+  acceptInvitation,
+  createInvitation,
+  createWorkspace,
+  deleteWorkspace,
+  getMyInvitations,
+  getMyWorkspaces,
+  getWorkspaceById,
+  getWorkspaceMembers,
+  leaveWorkspace,
+  rejectInvitation,
+  removeMember,
+  updateMemberRole,
+  updateWorkspace,
+} from "../controllers/workspace.controller";
+import authenticate = require("../middleware/auth.middleware");
+
 const router = express.Router();
-
-const authenticate = require("../middleware/auth.middleware");
-
-const { 
-    createWorkspace,
-    getMyWorkspaces,
-    getWorkspaceById,
-    updateWorkspace,
-    deleteWorkspace,
-    createInvitation,
-    getMyInvitations,
-    acceptInvitation,
-    rejectInvitation,
-    getWorkspaceMembers,
-    removeMember,
-    updateMemberRole,
-    leaveWorkspace,
-} = require("../controllers/workspace.controller");
 
 router.post("/", authenticate, createWorkspace);
 router.get("/", authenticate, getMyWorkspaces);
@@ -33,4 +32,4 @@ router.patch("/:id/members/:userId", authenticate, updateMemberRole);
 router.get("/:id", authenticate, getWorkspaceById);
 router.delete("/:id/leave", authenticate, leaveWorkspace);
 
-module.exports = router;
+export = router;
