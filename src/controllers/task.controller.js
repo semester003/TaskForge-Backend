@@ -143,7 +143,6 @@ const getTaskById = async (req, res) => {
 // UPDATE TASK
 const updateTask = async (req, res) => {
     const taskId = Number(req.params.taskId);
-    const { title, completed } = req.body;
 
     const task = await prisma.task.findFirst({
         where: {
@@ -167,30 +166,28 @@ const updateTask = async (req, res) => {
         });
     }
 
+    const updateData = {};
+
+    if (req.body.title !== undefined) {
+        updateData.title = req.body.title;
+    }
+
+    if (req.body.completed !== undefined) {
+        updateData.completed = req.body.completed;
+    }
+
     const updatedTask = await prisma.task.update({
         where: {
             id: taskId,
         },
-        data: {
-            title,
-            completed,
-        },
+        data: updateData,
         include: {
-            assignee: {
-                select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                },
-            },
+            project: true,
+            assignee: true,
         },
     });
 
-    return res.status(200).json({
-        success: true,
-        message: "Task updated successfully",
-        data: updatedTask,
-    });
+    res.status(200).json(updatedTask);
 };
 
 

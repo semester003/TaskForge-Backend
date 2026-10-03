@@ -2,18 +2,27 @@ const express = require("express");
 const router = express.Router();
 
 const authenticate = require("../middleware/auth.middleware");
-const { 
+const validate = require("../middleware/validate.middleware");
+
+const {
     createProject,
     getProjects,
     updateProject,
-    deleteProject
+    deleteProject,
 } = require("../controllers/project.controller");
+
+const {
+    createProjectSchema,
+    updateProjectSchema,
+} = require("../validations/project.validation");
 
 router.post(
     "/workspaces/:workspaceId/projects",
     authenticate,
+    validate(createProjectSchema),
     createProject
 );
+
 router.get(
     "/workspaces/:workspaceId/projects",
     authenticate,
@@ -23,6 +32,7 @@ router.get(
 router.put(
     "/projects/:projectId",
     authenticate,
+    validate(updateProjectSchema),
     updateProject
 );
 
@@ -31,7 +41,5 @@ router.delete(
     authenticate,
     deleteProject
 );
-
-
 
 module.exports = router;

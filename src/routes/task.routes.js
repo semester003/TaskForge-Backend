@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const authenticate = require("../middleware/auth.middleware");
+const validate = require("../middleware/validate.middleware");
 
 const {
     createTask,
@@ -14,14 +15,19 @@ const {
     unassignTask,
 } = require("../controllers/task.controller");
 
+const {
+    createTaskSchema,
+    updateTaskSchema,
+    assignTaskSchema,
+} = require("../validations/task.validation");
 
 // Create task
 router.post(
     "/projects/:projectId/tasks",
     authenticate,
+    validate(createTaskSchema),
     createTask
 );
-
 
 // Get all tasks of project
 router.get(
@@ -30,7 +36,6 @@ router.get(
     getTasks
 );
 
-
 // Get single task
 router.get(
     "/tasks/:taskId",
@@ -38,14 +43,13 @@ router.get(
     getTaskById
 );
 
-
 // Update task
 router.put(
     "/tasks/:taskId",
     authenticate,
+    validate(updateTaskSchema),
     updateTask
 );
-
 
 // Delete task
 router.delete(
@@ -54,17 +58,19 @@ router.delete(
     deleteTask
 );
 
+// Assign task
 router.patch(
     "/tasks/:taskId/assign",
     authenticate,
+    validate(assignTaskSchema),
     assignTask
 );
 
+// Unassign task
 router.patch(
     "/tasks/:taskId/unassign",
     authenticate,
     unassignTask
 );
-
 
 module.exports = router;
