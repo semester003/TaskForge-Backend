@@ -45,9 +45,42 @@ async function createAuthenticatedUser() {
 }
 
 async function deleteTestUser(email) {
+    const user = await prisma.user.findUnique({
+        where: { email },
+    });
+
+    if (!user) {
+        return;
+    }
+
+    // Delete workspaces owned by this user.
+    // Workspace deletion cascades to its related resources.
+    await prisma.workspace.deleteMany({
+        where: {
+            ownerId: user.id,
+        },
+    });
+
+    // Remove memberships in other workspaces.
+    await prisma.workspaceMember.deleteMany({
+        where: {
+            userId: user.id,
+        },
+    });
+
+    // Remove invitations involving this user.
+    await prisma.workspaceInvitation.deleteMany({
+        where: {
+            OR: [
+                { invitedUserId: user.id },
+                { invitedById: user.id },
+            ],
+        },
+    });
+
     await prisma.user.delete({
         where: {
-            email,
+            id: user.id,
         },
     });
 }
