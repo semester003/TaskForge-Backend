@@ -187,7 +187,11 @@ const updateTask = async (req, res) => {
         },
     });
 
-    res.status(200).json(updatedTask);
+    return res.status(200).json({
+        success: true,
+        message: "Task updated successfully",
+        data: updatedTask,
+    });
 };
 
 
